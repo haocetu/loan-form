@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, type FormEvent, type ChangeEvent } from "react";
+import Image from "next/image";
+import logoImg from "../images/logo.png";
+import bannerImg from "../images/shfinance_mini.png";
 
 interface FormData {
   full_name: string;
@@ -32,7 +35,7 @@ export default function HomePage() {
 
   /** Update form field */
   function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -105,7 +108,7 @@ export default function HomePage() {
     } catch (err) {
       setStatus("error");
       setErrorMessage(
-        err instanceof Error ? err.message : "Có lỗi xảy ra, vui lòng thử lại."
+        err instanceof Error ? err.message : "Có lỗi xảy ra, vui lòng thử lại.",
       );
     }
   }
@@ -115,19 +118,60 @@ export default function HomePage() {
       {/* Header */}
       <header className="header">
         <div className="header-inner">
-          <div className="logo-icon">V</div>
+          <Image
+            src={logoImg}
+            alt="Shinhan Finance Logo"
+            width={40}
+            height={40}
+            style={{ objectFit: "contain" }}
+          />
           <div className="logo-text">
-            Vay<span>Capital</span>
+            Shinhan <span>Finance</span>
           </div>
         </div>
       </header>
 
+      {/* Banner */}
+      <section
+        className="banner"
+        style={{
+          width: "100%",
+          maxWidth: "560px",
+          margin: "32px auto 0",
+          padding: "0 24px",
+        }}
+      >
+        <Image
+          src={bannerImg}
+          alt="Shinhan Finance Banner"
+          priority
+          sizes="(max-width: 560px) 100vw, 560px"
+          style={{
+            width: "100%",
+            height: "auto",
+            borderRadius: "12px",
+            display: "block",
+            boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+          }}
+        />
+      </section>
+
       {/* Hero */}
       <section className="hero">
-        <h1>Đăng ký vay vốn nhanh chóng</h1>
+        <h1>Vay tiêu dùng SHINHAN FINANCE</h1>
         <p>
-          Điền thông tin bên dưới để được tư vấn và hỗ trợ giải ngân trong thời
-          gian sớm nhất.
+          <b>
+            Hạn mức tối đa 13 lần thu nhập, khoản vay từ 10 - 500 triệu đồng
+          </b>
+        </p>
+        <p>
+          Hồ sơ online 100% - Duyệt và giải ngân nhanh chóng <br />
+          Không thế chấp tài sản
+          <br />
+          Không phí thẩm định
+          <br />
+          Không phí làm hồ sơ
+          <br />
         </p>
       </section>
 
@@ -137,10 +181,10 @@ export default function HomePage() {
           {/* Success message */}
           {status === "success" && (
             <div className="alert alert-success" role="alert">
-              <span className="alert-icon">✅</span>
+              {/* <span className="alert-icon">✅</span> */}
               <span>
-                Đăng ký thành công! Chúng tôi sẽ liên hệ bạn trong thời gian
-                sớm nhất.
+                Đăng ký thành công! Chúng tôi sẽ liên hệ bạn trong thời gian sớm
+                nhất.
               </span>
             </div>
           )}
@@ -189,9 +233,7 @@ export default function HomePage() {
                 onChange={handleChange}
                 disabled={status === "loading"}
               />
-              {errors.phone && (
-                <p className="field-error">{errors.phone}</p>
-              )}
+              {errors.phone && <p className="field-error">{errors.phone}</p>}
             </div>
 
             {/* Email */}

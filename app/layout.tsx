@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Đăng ký vay vốn | Hỗ trợ tài chính nhanh chóng",
+  title: "Vay tiêu dùng SHINHAN FINANCE",
   description:
     "Đăng ký vay vốn trực tuyến nhanh chóng, lãi suất ưu đãi. Điền thông tin để được tư vấn miễn phí.",
 };
