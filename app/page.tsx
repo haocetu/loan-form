@@ -234,7 +234,23 @@ export default function HomePage() {
 
   async function handleSubmit(ev: FormEvent) {
     ev.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      setStatus("error");
+      setErrorMessage("Vui lòng kiểm tra lại các thông tin chưa hợp lệ.");
+      setTimeout(() => {
+        const firstError = document.querySelector(".field-error");
+        if (firstError) {
+          const formGroup = firstError.closest(".form-group");
+          (formGroup || firstError).scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 50);
+      return;
+    }
 
     setStatus("loading");
     setErrorMessage("");
@@ -438,7 +454,7 @@ export default function HomePage() {
           {/* Error message */}
           {status === "error" && (
             <div className="alert alert-error" role="alert">
-              <span className="alert-icon">❌</span>
+              {/* <span className="alert-icon">❌</span> */}
               <span>{errorMessage}</span>
             </div>
           )}
