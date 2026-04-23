@@ -13,7 +13,7 @@ interface LoanApplicationPayload {
 }
 
 const MAX_TEXT_LENGTH = 100;
-const MAX_LOAN_AMOUNT = 9999; // Triệu đồng
+const MAX_LOAN_AMOUNT = 1000000000; // VNĐ
 
 /**
  * POST /api/loan-applications
@@ -109,9 +109,9 @@ export async function POST(request: NextRequest) {
       isNaN(loan_amount) ||
       loan_amount <= 0
     ) {
-      errors.push("Số tiền vay (loan_amount) phải là số lớn hơn 0.");
+      errors.push("Số tiền vay phải là số lớn hơn 0");
     } else if (loan_amount > MAX_LOAN_AMOUNT) {
-      errors.push(`Số tiền vay tối đa ${MAX_LOAN_AMOUNT} triệu đồng.`);
+      errors.push(`Số tiền vay tối đa là 1 tỷ VNĐ.`);
     }
 
     if (errors.length > 0) {

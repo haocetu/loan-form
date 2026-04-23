@@ -45,7 +45,7 @@ type SubmitStatus = "idle" | "loading" | "success" | "error";
 
 const MAX_TEXT_LENGTH = 100;
 const MAX_PHONE_LENGTH = 11;
-const MAX_LOAN_AMOUNT = 9999; // Triệu đồng (~10 tỷ)
+const MAX_LOAN_AMOUNT = 1000000000;
 
 /* ──────────── Radio Options ──────────── */
 
@@ -103,7 +103,15 @@ export default function HomePage() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let newValue = value;
+    if (name === "loan_amount") {
+      // Remove non-digit characters and format with dots
+      const digits = value.replace(/\D/g, "");
+      newValue = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
 
     // Clear field error on change
     if (errors[name as keyof FormErrors]) {
@@ -207,13 +215,14 @@ export default function HomePage() {
 
     // 8. Số tiền mong muốn vay
     if (!formData.loan_amount.trim()) {
-      e.loan_amount = "Vui lòng nhập";
+      e.loan_amount = "Vui lòng nhập số tiền hợp lệ";
     } else {
-      const amount = parseFloat(formData.loan_amount);
+      const amountStr = formData.loan_amount.replace(/\./g, "");
+      const amount = parseFloat(amountStr);
       if (isNaN(amount) || amount <= 0) {
         e.loan_amount = "Số tiền vay phải là số lớn hơn 0";
       } else if (amount > MAX_LOAN_AMOUNT) {
-        e.loan_amount = `Tối đa ${MAX_LOAN_AMOUNT} triệu đồng`;
+        e.loan_amount = `Số tiền vay tối đa là 1 tỷ VNĐ`;
       }
     }
 
@@ -245,7 +254,7 @@ export default function HomePage() {
         monthly_income: resolve("monthly_income", "monthly_income_other"),
         income_method: resolve("income_method", "income_method_other"),
         debt_history: resolve("debt_history", "debt_history_other"),
-        loan_amount: parseFloat(formData.loan_amount),
+        loan_amount: parseFloat(formData.loan_amount.replace(/\./g, "")),
       };
 
       const res = await fetch("/api/loan-applications", {
@@ -267,6 +276,12 @@ export default function HomePage() {
       setErrorMessage(
         err instanceof Error ? err.message : "Có lỗi xảy ra, vui lòng thử lại.",
       );
+    } finally {
+      // Scroll to the form section to show the status message
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
   }
 
@@ -408,7 +423,7 @@ export default function HomePage() {
       </section>
 
       {/* Form */}
-      <section className="form-section">
+      <section className="form-section" id="form-section">
         <div className="form-card">
           {/* Success message */}
           {status === "success" && (
@@ -518,16 +533,15 @@ export default function HomePage() {
                 <input
                   id="loan_amount"
                   name="loan_amount"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   className={`form-input ${errors.loan_amount ? "input-error" : ""}`}
                   // placeholder="100"
-                  min="1"
-                  max={MAX_LOAN_AMOUNT}
                   value={formData.loan_amount}
                   onChange={handleChange}
                   disabled={status === "loading"}
                 />
-                <span className="suffix-label">Triệu đồng</span>
+                <span className="suffix-label">VNĐ</span>
               </div>
               {errors.loan_amount && (
                 <p className="field-error">{errors.loan_amount}</p>
