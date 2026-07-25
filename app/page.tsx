@@ -46,7 +46,7 @@ type SubmitStatus = "idle" | "loading" | "success" | "error";
 /* ──────────── Constants ──────────── */
 
 const MAX_TEXT_LENGTH = 100;
-const MAX_PHONE_LENGTH = 11;
+const MAX_PHONE_LENGTH = 10;
 const MAX_LOAN_AMOUNT = 1000000000;
 
 /* ──────────── Radio Options ──────────── */
@@ -114,7 +114,7 @@ export default function HomePage() {
       newValue = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    if (name === "birth_year") {
+    if (name === "birth_year" || name === "phone") {
       newValue = value.replace(/\D/g, "");
     }
 
@@ -166,8 +166,8 @@ export default function HomePage() {
     // 2. Số điện thoại
     if (!formData.phone.trim()) {
       e.phone = "Vui lòng nhập";
-    } else if (!/^[0-9]{9,11}$/.test(formData.phone.trim())) {
-      e.phone = "Số điện thoại không hợp lệ (9-11 chữ số)";
+    } else if (!/^[0-9]{9,10}$/.test(formData.phone.trim())) {
+      e.phone = "Số điện thoại không hợp lệ (9-10 chữ số)";
     }
 
     // 3. Khu vực sinh sống
