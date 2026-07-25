@@ -9,6 +9,7 @@ import bannerImg from "../images/shfinance_mini.png";
 
 interface FormData {
   full_name: string;
+  birth_year: string;
   phone: string;
   living_area: string;
   living_area_other: string;
@@ -25,6 +26,7 @@ interface FormData {
 
 interface FormErrors {
   full_name?: string;
+  birth_year?: string;
   phone?: string;
   living_area?: string;
   living_area_other?: string;
@@ -75,6 +77,7 @@ const DEBT_HISTORY_OPTIONS = [
 
 const INITIAL_FORM: FormData = {
   full_name: "",
+  birth_year: "",
   phone: "",
   living_area: "",
   living_area_other: "",
@@ -109,6 +112,10 @@ export default function HomePage() {
       // Remove non-digit characters and format with dots
       const digits = value.replace(/\D/g, "");
       newValue = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    if (name === "birth_year") {
+      newValue = value.replace(/\D/g, "");
     }
 
     setFormData((prev) => ({ ...prev, [name]: newValue }));
@@ -147,6 +154,13 @@ export default function HomePage() {
       e.full_name = "Vui lòng nhập";
     } else if (formData.full_name.trim().length > MAX_TEXT_LENGTH) {
       e.full_name = `Tối đa ${MAX_TEXT_LENGTH} ký tự`;
+    }
+
+    // 1.5 Năm sinh
+    if (!formData.birth_year.trim()) {
+      e.birth_year = "Vui lòng nhập";
+    } else if (!/^[0-9]{4}$/.test(formData.birth_year.trim())) {
+      e.birth_year = "Năm sinh phải có 4 chữ số";
     }
 
     // 2. Số điện thoại
@@ -264,6 +278,7 @@ export default function HomePage() {
 
       const payload = {
         full_name: formData.full_name.trim(),
+        birth_year: Number(formData.birth_year),
         phone: formData.phone.trim(),
         living_area: resolve("living_area", "living_area_other"),
         job_type: resolve("job_type", "job_type_other"),
@@ -478,6 +493,29 @@ export default function HomePage() {
               />
               {errors.full_name && (
                 <p className="field-error">{errors.full_name}</p>
+              )}
+            </div>
+
+            {/* 1.5 Năm sinh */}
+            <div className="form-group">
+              <label htmlFor="birth_year" className="form-label">
+                Năm sinh <span className="required">*</span>
+              </label>
+              <div className="input-suffix">
+                <input
+                  id="birth_year"
+                  name="birth_year"
+                  type="text"
+                  inputMode="numeric"
+                  className={`form-input ${errors.birth_year ? "input-error" : ""}`}
+                  value={formData.birth_year}
+                  onChange={handleChange}
+                  disabled={status === "loading"}
+                  maxLength={4}
+                />
+              </div>
+              {errors.birth_year && (
+                <p className="field-error">{errors.birth_year}</p>
               )}
             </div>
 

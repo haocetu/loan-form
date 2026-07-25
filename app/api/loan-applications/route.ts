@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseClient";
 
 interface LoanApplicationPayload {
   full_name?: string;
+  birth_year?: number;
   phone?: string;
   living_area?: string;
   job_type?: string;
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
 
     const {
       full_name,
+      birth_year,
       phone,
       living_area,
       job_type,
@@ -52,6 +54,15 @@ export async function POST(request: NextRequest) {
       errors.push("Họ tên (full_name) là bắt buộc.");
     } else if (full_name.trim().length > MAX_TEXT_LENGTH) {
       errors.push(`Họ tên tối đa ${MAX_TEXT_LENGTH} ký tự.`);
+    }
+
+    if (birth_year === null || birth_year === undefined) {
+      errors.push("Năm sinh (birth_year) là bắt buộc.");
+    } else if (
+      typeof birth_year !== "number" ||
+      !Number.isInteger(birth_year)
+    ) {
+      errors.push("Năm sinh không hợp lệ.");
     }
 
     if (!phone || typeof phone !== "string" || !phone.trim()) {
@@ -128,6 +139,7 @@ export async function POST(request: NextRequest) {
       .from("loan_applications")
       .insert({
         full_name: full_name!.trim(),
+        birth_year: birth_year!,
         phone: phone!.trim(),
         living_area: living_area!.trim(),
         job_type: job_type!.trim(),
