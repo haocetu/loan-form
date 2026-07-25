@@ -19,6 +19,8 @@ interface FormData {
   monthly_income_other: string;
   income_method: string;
   income_method_other: string;
+  current_debt: string;
+  current_debt_other: string;
   debt_history: string;
   debt_history_other: string;
   loan_amount: string;
@@ -36,6 +38,8 @@ interface FormErrors {
   monthly_income_other?: string;
   income_method?: string;
   income_method_other?: string;
+  current_debt?: string;
+  current_debt_other?: string;
   debt_history?: string;
   debt_history_other?: string;
   loan_amount?: string;
@@ -66,6 +70,8 @@ const MONTHLY_INCOME_OPTIONS = ["Dưới 8 triệu", "Trên 8 triệu"];
 
 const INCOME_METHOD_OPTIONS = ["Chuyển khoản qua ngân hàng", "Tiền mặt"];
 
+const CURRENT_DEBT_OPTIONS = ["Có", "Không"];
+
 const DEBT_HISTORY_OPTIONS = [
   "Chưa bao giờ (Thanh toán đúng hạn)",
   "Đã từng trễ hạn dưới 10 ngày",
@@ -87,6 +93,8 @@ const INITIAL_FORM: FormData = {
   monthly_income_other: "",
   income_method: "",
   income_method_other: "",
+  current_debt: "",
+  current_debt_other: "",
   debt_history: "",
   debt_history_other: "",
   loan_amount: "",
@@ -216,6 +224,17 @@ export default function HomePage() {
       }
     }
 
+    // Tình trạng nợ
+    if (!formData.current_debt) {
+      e.current_debt = "Vui lòng chọn";
+    } else if (formData.current_debt === "__other__") {
+      if (!formData.current_debt_other.trim()) {
+        e.current_debt_other = "Vui lòng nhập";
+      } else if (formData.current_debt_other.trim().length > MAX_TEXT_LENGTH) {
+        e.current_debt_other = `Tối đa ${MAX_TEXT_LENGTH} ký tự`;
+      }
+    }
+
     // 7. Lịch sử nợ
     if (!formData.debt_history) {
       e.debt_history = "Vui lòng chọn";
@@ -284,6 +303,7 @@ export default function HomePage() {
         job_type: resolve("job_type", "job_type_other"),
         monthly_income: resolve("monthly_income", "monthly_income_other"),
         income_method: resolve("income_method", "income_method_other"),
+        current_debt: resolve("current_debt", "current_debt_other"),
         debt_history: resolve("debt_history", "debt_history_other"),
         loan_amount: parseFloat(formData.loan_amount.replace(/\./g, "")),
       };
@@ -568,6 +588,14 @@ export default function HomePage() {
               "income_method",
               INCOME_METHOD_OPTIONS,
               "income_method_other",
+            )}
+
+            {/* Tình trạng nợ */}
+            {renderRadioField(
+              "Bạn có đang tham gia khoản vay/mua hàng trả góp hoặc dùng thẻ tín dụng không?",
+              "current_debt",
+              CURRENT_DEBT_OPTIONS,
+              "current_debt_other",
             )}
 
             {/* 7. Lịch sử nợ / trễ hạn */}

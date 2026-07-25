@@ -9,6 +9,7 @@ interface LoanApplicationPayload {
   job_type?: string;
   monthly_income?: string;
   income_method?: string;
+  current_debt?: string;
   debt_history?: string;
   loan_amount?: number;
 }
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
       job_type,
       monthly_income,
       income_method,
+      current_debt,
       debt_history,
       loan_amount,
     } = body;
@@ -104,6 +106,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (
+      !current_debt ||
+      typeof current_debt !== "string" ||
+      !current_debt.trim()
+    ) {
+      errors.push("Tình trạng nợ (current_debt) là bắt buộc.");
+    } else if (current_debt.trim().length > MAX_TEXT_LENGTH) {
+      errors.push(`Tình trạng nợ tối đa ${MAX_TEXT_LENGTH} ký tự.`);
+    }
+
+    if (
       !debt_history ||
       typeof debt_history !== "string" ||
       !debt_history.trim()
@@ -145,6 +157,7 @@ export async function POST(request: NextRequest) {
         job_type: job_type!.trim(),
         monthly_income: monthly_income!.trim(),
         income_method: income_method!.trim(),
+        current_debt: current_debt!.trim(),
         debt_history: debt_history!.trim(),
         loan_amount: loan_amount!,
       })
